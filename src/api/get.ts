@@ -40,39 +40,31 @@ export function useGet<T> (
 
   const finalUrl = finalizeUrl(url, parameters)
 
+  const [data, setData] = useState<T>()
+  const [isLoading, setLoading] = useState(true)
+  const [error, setError] = useState<RequestError>()
+  const [statusCode, setStatusCode] = useState<number | undefined>(
+    undefined
+  )
+  const [shouldRun, setShouldRun] = useState(true)
+
   const hookData = hasHookData(finalUrl)
     ? getHookData<T>(finalUrl)
-    : (() => {
-        const [data, setData] = useState<T>()
-        const [isLoading, setLoading] = useState(true)
-        const [error, setError] = useState<RequestError>()
-        const [statusCode, setStatusCode] = useState<number | undefined>(
-          undefined
-        )
-        // const [shouldRun, setShouldRun] = useState(true)
-        const thingy = useState(true)
-        console.log('setting thingy')
-        console.log(thingy[0])
-        thingy[1](false)
-        console.log(thingy[0])
-
-        return {
-          data,
-          isLoading,
-          error,
-          statusCode,
-          shouldRun: thingy[0],
-          setData,
-          setLoading,
-          setError,
-          setStatusCode,
-          setShouldRun: thingy[1],
-          thingy,
-          trigger: () => {
-            thingy[1](true)
-          }
+    : {
+        data,
+        isLoading,
+        error,
+        statusCode,
+        shouldRun,
+        setData,
+        setLoading,
+        setError,
+        setStatusCode,
+        setShouldRun,
+        trigger: () => {
+          setShouldRun(true)
         }
-      })()
+      }
 
   if (hookData != null) {
     saveHookData(finalUrl, hookData)
