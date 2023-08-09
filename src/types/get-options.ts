@@ -1,4 +1,4 @@
-import { type RequestError } from './errors'
+import { type HookData } from './hook-data'
 
 export interface GetOptions {
   parameters?: Record<string, any> | null
@@ -11,10 +11,6 @@ export interface GetOptionsInternal<T> {
   finalUrl: string
   disableCache?: boolean
   options?: RequestInit
-  data: T | undefined
   throttleInterval: number
-  setData: (data: T) => void
-  setLoading: (loading: boolean) => void
-  setError: (error: RequestError) => void
-  setStatusCode: (statusCode: number) => void
+  hookData: HookData<T>
 }

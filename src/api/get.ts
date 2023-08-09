@@ -40,103 +40,57 @@ export function useGet<T> (
 
   const finalUrl = finalizeUrl(url, parameters)
 
-  let data: T | undefined
-  let isLoading = true
-  let error: RequestError | undefined
-  let statusCode: number | undefined
-  let shouldRun = true
-  let trigger: () => void = () => {}
-  let setData: (data: T) => void
-  let setLoading: (loading: boolean) => void
-  let setError: (error: RequestError) => void
-  let setStatusCode: (statusCode: number) => void
-  let setShouldRun: (shouldRun: boolean) => void
+  const hookData = hasHookData(finalUrl)
+    ? getHookData<T>(finalUrl)
+    : (() => {
+        const [data, setData] = useState<T>()
+        const [isLoading, setLoading] = useState(true)
+        const [error, setError] = useState<RequestError>()
+        const [statusCode, setStatusCode] = useState<number | undefined>(
+          undefined
+        )
+        const [shouldRun, setShouldRun] = useState(true)
 
-  if (hasHookData(finalUrl)) {
-    const hookData = getHookData<T>(finalUrl)
+        return {
+          data,
+          isLoading,
+          error,
+          statusCode,
+          shouldRun,
+          setData,
+          setLoading,
+          setError,
+          setStatusCode,
+          setShouldRun,
+          trigger: () => {
+            setShouldRun(true)
+          }
+        }
+      })()
 
-    data = hookData?.data
-    isLoading = hookData?.isLoading ?? true
-    error = hookData?.error
-    statusCode = hookData?.statusCode
-    if ((hookData?.setData) != null) {
-      setData = hookData?.setData
-    }
-    if ((hookData?.setLoading) != null) {
-      setLoading = hookData?.setLoading
-    }
-    if ((hookData?.setError) != null) {
-      setError = hookData?.setError
-    }
-    if ((hookData?.setStatusCode) != null) {
-      setStatusCode = hookData?.setStatusCode
-    }
-    if ((hookData?.shouldRun) != null) {
-      shouldRun = hookData?.shouldRun
-    }
-    if ((hookData?.setShouldRun) != null) {
-      setShouldRun = hookData?.setShouldRun
-    }
-    if ((hookData?.trigger) != null) {
-      trigger = hookData?.trigger
-    }
-  } else {
-    const [newData, setNewData] = useState<T>()
-    const [newIsLoading, setNewLoading] = useState(true)
-    const [newError, setNewError] = useState<RequestError>()
-    const [newStatusCode, setNewStatusCode] = useState<number | undefined>(undefined)
-    const [newShouldRun, setNewShouldRun] = useState(true)
-    data = newData
-    isLoading = newIsLoading
-    error = newError
-    statusCode = newStatusCode
-    shouldRun = newShouldRun
-    setData = setNewData
-    setLoading = setNewLoading
-    setError = setNewError
-    setStatusCode = setNewStatusCode
-    setShouldRun = setNewShouldRun
-    trigger = () => {
-      setNewShouldRun(true)
-    }
-    saveHookData(finalUrl, {
-      data,
-      isLoading,
-      error,
-      statusCode,
-      shouldRun,
-      setData,
-      setLoading,
-      setError,
-      setStatusCode,
-      setShouldRun,
-      trigger
-    })
+  if (hookData != null) {
+    saveHookData(finalUrl, hookData)
   }
 
   useEffect(() => {
-    if (shouldRun) {
+    if (hookData?.shouldRun) {
       get<T>({
         finalUrl,
         options: cleanedOptions,
         disableCache,
-        data,
         throttleInterval,
-        setData,
-        setLoading,
-        setError,
-        setStatusCode
+        hookData
       })
     }
-    setShouldRun(false)
-  }, [shouldRun])
+    hookData?.setShouldRun(false)
+  }, [hookData?.shouldRun])
 
   return {
-    data,
-    isLoading,
-    error,
-    statusCode,
-    trigger
+    data: hookData?.data,
+    isLoading: hookData?.isLoading ?? true,
+    error: hookData?.error,
+    statusCode: hookData?.statusCode,
+    trigger: hookData?.trigger
   }
 }
 
@@ -145,12 +99,8 @@ function get<T> (
     finalUrl,
     options = {},
     disableCache = false,
-    data,
     throttleInterval,
-    setData,
-    setLoading,
-    setError,
-    setStatusCode
+    hookData
   }: GetOptionsInternal<T>
 ): void {
   const cleanedOptions = pick(options, [
@@ -170,8 +120,8 @@ function get<T> (
   }
 
   if (!disableCache && cache.has(finalUrl)) {
-    setData(cache.get(finalUrl))
-    setLoading(false)
+    hookData.setData(cache.get(finalUrl))
+    hookData.setLoading(false)
   }
 
   throttle({
@@ -182,7 +132,7 @@ function get<T> (
         ...cleanedOptions
       })
         .then(async (apiResponse) => {
-          setStatusCode(apiResponse.status)
+          hookData.setStatusCode(apiResponse.status)
           if (apiResponse.ok) {
             const responseData = await apiResponse.json()
             return responseData
@@ -190,18 +140,18 @@ function get<T> (
           return await Promise.reject(apiResponse)
         })
         .then((responseData) => {
-          if (!deepCompare(responseData, data)) {
-            setData(responseData)
+          if (!deepCompare(responseData, hookData.data)) {
+            hookData.setData(responseData)
             if (!disableCache) {
               cache.set(finalUrl, responseData)
             }
           }
         })
         .catch((apiError) => {
-          setError(apiError)
+          hookData.setError(apiError)
         })
         .finally(() => {
-          setLoading(false)
+          hookData.setLoading(false)
         })
     },
     wait: throttleInterval
