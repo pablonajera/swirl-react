@@ -7,7 +7,7 @@ export interface HookData<T> {
   statusCode: number | undefined
   shouldRun: boolean
   trigger: () => void
-  setData: (data: T | undefined) => void
+  setData: (data: T) => void
   setLoading: (loading: boolean) => void
   setError: (error: RequestError) => void
   setStatusCode: (statusCode: number) => void

@@ -86,20 +86,31 @@ export function useGet<T> (
     const [newError, setNewError] = useState<RequestError>()
     const [newStatusCode, setNewStatusCode] = useState<number | undefined>(undefined)
     const [newShouldRun, setNewShouldRun] = useState(true)
+    data = newData
+    isLoading = newIsLoading
+    error = newError
+    statusCode = newStatusCode
+    shouldRun = newShouldRun
+    setData = setNewData
+    setLoading = setNewLoading
+    setError = setNewError
+    setStatusCode = setNewStatusCode
+    setShouldRun = setNewShouldRun
+    trigger = () => {
+      setNewShouldRun(true)
+    }
     saveHookData(finalUrl, {
-      data: newData,
-      isLoading: newIsLoading,
-      error: newError,
-      statusCode: newStatusCode,
-      shouldRun: newShouldRun,
-      setData: setNewData,
-      setLoading: setNewLoading,
-      setError: setNewError,
-      setStatusCode: setNewStatusCode,
-      setShouldRun: setNewShouldRun,
-      trigger: () => {
-        setNewShouldRun(true)
-      }
+      data,
+      isLoading,
+      error,
+      statusCode,
+      shouldRun,
+      setData,
+      setLoading,
+      setError,
+      setStatusCode,
+      setShouldRun,
+      trigger
     })
   }
 
