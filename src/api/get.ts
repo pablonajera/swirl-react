@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 import { useState, useEffect } from 'react'
 import {
   type GetOptions,
@@ -10,6 +11,7 @@ import { pick } from '../utils/pick.js'
 import { throttle } from '../utils/throttle.js'
 import { finalizeUrl } from '../utils/url.js'
 import { type RequestError } from '../types/errors.js'
+import { getHookData, hasHookData, saveHookData } from '../utils/hook-data-cache.js'
 
 export function useGet<T> (
   url: string,
@@ -36,16 +38,75 @@ export function useGet<T> (
     'Content-Type': 'application/json'
   }
 
-  const [data, setData] = useState<T>()
-  const [isLoading, setLoading] = useState(true)
-  const [error, setError] = useState<RequestError>()
-  const [statusCode, setStatusCode] = useState<number | undefined>(undefined)
-  const [shouldRun, setShouldRun] = useState(true)
+  const finalUrl = finalizeUrl(url, parameters)
+
+  let data: T | undefined
+  let isLoading = true
+  let error: RequestError | undefined
+  let statusCode: number | undefined
+  let shouldRun = true
+  let trigger: () => void = () => {}
+  let setData: (data: T) => void
+  let setLoading: (loading: boolean) => void
+  let setError: (error: RequestError) => void
+  let setStatusCode: (statusCode: number) => void
+  let setShouldRun: (shouldRun: boolean) => void
+
+  if (hasHookData(finalUrl)) {
+    const hookData = getHookData<T>(finalUrl)
+
+    data = hookData?.data
+    isLoading = hookData?.isLoading ?? true
+    error = hookData?.error
+    statusCode = hookData?.statusCode
+    if ((hookData?.setData) != null) {
+      setData = hookData?.setData
+    }
+    if ((hookData?.setLoading) != null) {
+      setLoading = hookData?.setLoading
+    }
+    if ((hookData?.setError) != null) {
+      setError = hookData?.setError
+    }
+    if ((hookData?.setStatusCode) != null) {
+      setStatusCode = hookData?.setStatusCode
+    }
+    if ((hookData?.shouldRun) != null) {
+      shouldRun = hookData?.shouldRun
+    }
+    if ((hookData?.setShouldRun) != null) {
+      setShouldRun = hookData?.setShouldRun
+    }
+    if ((hookData?.trigger) != null) {
+      trigger = hookData?.trigger
+    }
+  } else {
+    const [newData, setNewData] = useState<T>()
+    const [newIsLoading, setNewLoading] = useState(true)
+    const [newError, setNewError] = useState<RequestError>()
+    const [newStatusCode, setNewStatusCode] = useState<number | undefined>(undefined)
+    const [newShouldRun, setNewShouldRun] = useState(true)
+    saveHookData(finalUrl, {
+      data: newData,
+      isLoading: newIsLoading,
+      error: newError,
+      statusCode: newStatusCode,
+      shouldRun: newShouldRun,
+      setData: setNewData,
+      setLoading: setNewLoading,
+      setError: setNewError,
+      setStatusCode: setNewStatusCode,
+      setShouldRun: setNewShouldRun,
+      trigger: () => {
+        setNewShouldRun(true)
+      }
+    })
+  }
 
   useEffect(() => {
     if (shouldRun) {
-      get<T>(url, {
-        parameters,
+      get<T>({
+        finalUrl,
         options: cleanedOptions,
         disableCache,
         data,
@@ -59,10 +120,6 @@ export function useGet<T> (
     setShouldRun(false)
   }, [shouldRun])
 
-  function trigger (): void {
-    setShouldRun(true)
-  }
-
   return {
     data,
     isLoading,
@@ -73,9 +130,8 @@ export function useGet<T> (
 }
 
 function get<T> (
-  url: string,
   {
-    parameters = {},
+    finalUrl,
     options = {},
     disableCache = false,
     data,
@@ -102,8 +158,6 @@ function get<T> (
     'Content-Type': 'application/json'
   }
 
-  const finalUrl = finalizeUrl(url, parameters)
-
   if (!disableCache && cache.has(finalUrl)) {
     setData(cache.get(finalUrl))
     setLoading(false)
@@ -128,7 +182,7 @@ function get<T> (
           if (!deepCompare(responseData, data)) {
             setData(responseData)
             if (!disableCache) {
-              cache.set(url, responseData)
+              cache.set(finalUrl, responseData)
             }
           }
         })

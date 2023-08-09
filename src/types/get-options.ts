@@ -8,7 +8,7 @@ export interface GetOptions {
 }
 
 export interface GetOptionsInternal<T> {
-  parameters?: Record<string, any> | null
+  finalUrl: string
   disableCache?: boolean
   options?: RequestInit
   data: T | undefined
