@@ -14,11 +14,11 @@ export function useDataSend<T> (method: 'POST' | 'PUT' | 'DELETE' | 'PATCH', {
   parameters?: Record<string, any> | null
   options?: RequestInit
 }): Response<T> {
-  const [data, setData] = useState()
-  const [isLoading, setLoading] = useState(true)
+  const [data, setData] = useState(null)
+  const [isLoading, setLoading] = useState(false)
   const [shouldRun, setShouldRun] = useState(false)
-  const [error, setError] = useState<RequestError>()
-  const [statusCode, setStatusCode] = useState<number | undefined>(undefined)
+  const [error, setError] = useState<RequestError | null>(null)
+  const [statusCode, setStatusCode] = useState<number | null>(null)
 
   useEffect(() => {
     if (shouldRun) {
@@ -33,8 +33,8 @@ export function useDataSend<T> (method: 'POST' | 'PUT' | 'DELETE' | 'PATCH', {
         setError,
         setStatusCode
       })
+      setShouldRun(false)
     }
-    setShouldRun(false)
   }, [shouldRun])
 
   function trigger (): void {

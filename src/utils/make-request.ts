@@ -16,6 +16,7 @@ export function makeRequest ({
   setError,
   setStatusCode
 }: RequestOptions): void {
+  setLoading(true)
   const cleanedOptions = pick(options, [
     'headers',
     'mode',
