@@ -1,9 +1,9 @@
 import { type RequestError } from './errors'
 
 export interface Response<T> {
-  data: T | undefined
+  data: T | null
   isLoading: boolean
-  error: RequestError | undefined
-  statusCode: number | undefined
+  error: RequestError | null
+  statusCode: number | null
   trigger?: () => void
 }

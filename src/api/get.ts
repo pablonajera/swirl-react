@@ -1,4 +1,3 @@
-/* eslint-disable prefer-destructuring */
 import { useState, useEffect } from 'react'
 import {
   type GetOptions
@@ -38,59 +37,62 @@ export function useGet<T> (
 
   const finalUrl = finalizeUrl(url, parameters)
 
-  const [data, setData] = useState<T>()
+  const [data, setData] = useState<T | null>(null)
   const [isLoading, setLoading] = useState(true)
-  const [error, setError] = useState<RequestError>()
-  const [statusCode, setStatusCode] = useState<number>()
+  const [error, setError] = useState<RequestError | null>(null)
+  const [statusCode, setStatusCode] = useState<number | null>(null)
   const [shouldRun, setShouldRun] = useState(true)
 
   const trigger = (): void => {
     setShouldRun(true)
   }
 
-  if (!disableCache && cache.has(finalUrl)) {
-    setData(cache.get(finalUrl))
-    setLoading(false)
-  }
-
   useEffect(() => {
     if (shouldRun) {
-      throttle({
-        name: finalUrl,
-        run: () => {
-          fetch(finalUrl, {
-            method: 'GET',
-            ...cleanedOptions
-          })
-            .then(async (apiResponse) => {
-              setStatusCode(apiResponse.status)
-              if (apiResponse.ok) {
-                const responseData = await apiResponse.json()
-                return responseData
-              }
-              return await Promise.reject(apiResponse)
+      const start = (): void => {
+        if (!disableCache && cache.has(finalUrl)) {
+          setData(cache.get(finalUrl))
+          setLoading(false)
+          return
+        }
+        throttle({
+          name: finalUrl,
+          run: () => {
+            fetch(finalUrl, {
+              method: 'GET',
+              ...cleanedOptions
             })
-            .then((responseData) => {
-              if (!deepCompare(responseData, data)) {
-                setData(responseData)
-                setError(undefined)
-                if (!disableCache) {
-                  cache.set(finalUrl, responseData)
+              .then(async (apiResponse) => {
+                setStatusCode(apiResponse.status)
+                if (apiResponse.ok) {
+                  const responseData = await apiResponse.json()
+                  return responseData
                 }
-              }
-            })
-            .catch((apiError) => {
-              setError(apiError)
-              setData(undefined)
-            })
-            .finally(() => {
-              setLoading(false)
-            })
-        },
-        wait: throttleInterval
-      })
+                return await Promise.reject(apiResponse)
+              })
+              .then((responseData) => {
+                if (!deepCompare(responseData, data)) {
+                  setData(responseData)
+                  setError(null)
+                  if (!disableCache) {
+                    cache.set(finalUrl, responseData)
+                  }
+                }
+              })
+              .catch((apiError) => {
+                setError(apiError)
+                setData(null)
+              })
+              .finally(() => {
+                setLoading(false)
+              })
+          },
+          wait: throttleInterval
+        })
+      }
+      start()
+      setShouldRun(false)
     }
-    setShouldRun(false)
   }, [shouldRun])
 
   return {
