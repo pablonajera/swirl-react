@@ -41,18 +41,11 @@ export function useGet<T> (
   const [data, setData] = useState<T>()
   const [isLoading, setLoading] = useState(true)
   const [error, setError] = useState<RequestError>()
-  const [statusCode, setStatusCode] = useState<number | undefined>(
-    undefined
-  )
+  const [statusCode, setStatusCode] = useState<number>()
   const [shouldRun, setShouldRun] = useState(true)
 
   const trigger = (): void => {
     setShouldRun(true)
-  }
-
-  cleanedOptions.headers = {
-    ...cleanedOptions.headers,
-    'Content-Type': 'application/json'
   }
 
   if (!disableCache && cache.has(finalUrl)) {
@@ -80,6 +73,7 @@ export function useGet<T> (
             .then((responseData) => {
               if (!deepCompare(responseData, data)) {
                 setData(responseData)
+                setError(undefined)
                 if (!disableCache) {
                   cache.set(finalUrl, responseData)
                 }
@@ -87,6 +81,7 @@ export function useGet<T> (
             })
             .catch((apiError) => {
               setError(apiError)
+              setData(undefined)
             })
             .finally(() => {
               setLoading(false)
