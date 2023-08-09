@@ -61,7 +61,7 @@ export class LocalCache {
 
   private generateStorageKey (key: string): string {
     const normalizedKey = key.trim().toLowerCase().replace(/\/$/, '')
-    return hash(`${this.storagePrefix}_${normalizedKey}`)
+    return `${this.storagePrefix}_${hash(normalizedKey)}`
   }
 
   set (key: string, value: any): void {
