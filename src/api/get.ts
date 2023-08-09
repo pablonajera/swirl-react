@@ -49,21 +49,27 @@ export function useGet<T> (
         const [statusCode, setStatusCode] = useState<number | undefined>(
           undefined
         )
-        const [shouldRun, setShouldRun] = useState(true)
+        // const [shouldRun, setShouldRun] = useState(true)
+        const thingy = useState(true)
+        console.log('setting thingy')
+        console.log(thingy[0])
+        thingy[1](false)
+        console.log(thingy[0])
 
         return {
           data,
           isLoading,
           error,
           statusCode,
-          shouldRun,
+          shouldRun: thingy[0],
           setData,
           setLoading,
           setError,
           setStatusCode,
-          setShouldRun,
+          setShouldRun: thingy[1],
+          thingy,
           trigger: () => {
-            setShouldRun(true)
+            thingy[1](true)
           }
         }
       })()

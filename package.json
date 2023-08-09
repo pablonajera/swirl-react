@@ -1,6 +1,6 @@
 {
   "name": "@pablonajera/swirl-react",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Swirl, but as React Hooks",
   "main": "dist/pablonajera-swirl-react.cjs.js",
   "module": "dist/pablonajera-swirl-react.esm.js",

@@ -12,4 +12,5 @@ export interface HookData<T> {
   setError: (error: RequestError) => void
   setStatusCode: (statusCode: number) => void
   setShouldRun: (shouldRun: boolean) => void
+  thingy: [boolean, (shouldRun: boolean) => void]
 }
