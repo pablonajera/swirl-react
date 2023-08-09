@@ -50,9 +50,11 @@ export function makeRequest ({
     })
     .then((responseData) => {
       setData(responseData)
+      setError(null)
     })
     .catch((apiError) => {
       setError(apiError)
+      setData(null)
     })
     .finally(() => {
       setLoading(false)

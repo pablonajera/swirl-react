@@ -53,6 +53,8 @@ export function useGet<T> (
         if (!disableCache && cache.has(finalUrl)) {
           setData(cache.get(finalUrl))
           setLoading(false)
+        } else {
+          setLoading(true)
         }
         throttle({
           name: finalUrl,

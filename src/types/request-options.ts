@@ -8,6 +8,6 @@ export interface RequestOptions {
   options?: RequestInit
   setData: (data: any) => void
   setLoading: (loading: boolean) => void
-  setError: (error: RequestError) => void
+  setError: (error: RequestError | null) => void
   setStatusCode: (statusCode: number) => void
 }
