@@ -95,7 +95,6 @@ Assuming you have an API endpoint that returns the following:
 You can use swirl to fetch the data as follows:
 
 ```jsx
-import React from 'react';
 import { useGet } from 'swirl-react';
 
 export default function PostsPage() {
@@ -136,7 +135,6 @@ export default function PostsPage() {
 
 #### Sample with parameters
 ```jsx
-import React from 'react';
 import { useGet } from 'swirl-react';
 
 export default function PostsPageWithParameters() {
@@ -199,7 +197,7 @@ The `usePost` hook returns an object with the following properties:
 
 #### Sample
 ```jsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { usePost } from 'swirl-react';
 
 export default function CreatePostPage() {
