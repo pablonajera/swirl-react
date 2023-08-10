@@ -50,12 +50,7 @@
     "eslint-plugin-n": "^15.0.0 || ^16.0.0 ",
     "eslint-plugin-promise": "^6.0.0",
     "lint-staged": "^13.2.3",
-    "simple-git-hooks": "^2.9.0",
     "typescript": "*"
-  },
-  "simple-git-hooks": {
-    "pre-commit": "npx lint-staged",
-    "post-merge": "yarn"
   },
   "lint-staged": {
     "*.{js,jsx}": "eslint --fix"
