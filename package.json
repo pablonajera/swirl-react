@@ -1,6 +1,6 @@
 {
   "name": "swirl-react",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "React Hooks for swirly requests",
   "main": "dist/swirl-react.cjs.js",
   "module": "dist/swirl-react.esm.js",
