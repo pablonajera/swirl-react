@@ -1,21 +1,29 @@
 {
-  "name": "@pablonajera/swirl-react",
+  "name": "swirl-react",
   "version": "1.0.2",
-  "description": "Swirl, but as React Hooks",
-  "main": "dist/pablonajera-swirl-react.cjs.js",
-  "module": "dist/pablonajera-swirl-react.esm.js",
+  "description": "React Hooks for swirly requests",
+  "main": "dist/swirl-react.cjs.js",
+  "module": "dist/swirl-react.esm.js",
   "type": "module",
   "repository": "https://github.com/pablonajera/swirl-react.git",
   "author": "Pablo Najera <pablo@najera.cc>",
   "license": "MIT",
-  "exports": {
+   "exports": {
     ".": {
-      "import": "./dist/pablonajera-swirl-react.esm.js",
-      "require": "./dist/pablonajera-swirl-react.cjs.js"
+      "import": "./dist/swirl-react.esm.js",
+      "require": "./dist/swirl-react.cjs.js"
     }
   },
   "files": [
     "dist"
+  ],
+  "keywords": [
+    "swirl",
+    "react",
+    "hooks",
+    "request",
+    "fetch",
+    "axios"
   ],
   "scripts": {
     "build": "preconstruct build",
