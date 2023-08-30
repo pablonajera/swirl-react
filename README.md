@@ -193,7 +193,7 @@ The `usePost` hook returns an object with the following properties:
 | `isLoading`  | `boolean`              | A boolean indicating whether the request is currently loading.                    |
 | `error`      | `RequestError \| null` | An error object if the request encounters an error, otherwise `null`.             |
 | `statusCode` | `number \| null`       | The HTTP status code of the response, or `null` if no response has been received. |
-| `sendData`   | `function`             | A function that can be called to manually trigger the POST request with new data. |
+| `trigger`   | `function`             | A function that can be called to manually trigger the POST request with new data. |
 
 #### Sample
 ```jsx
@@ -291,7 +291,7 @@ The `usePatch` hook returns an object with properties similar to other hooks:
 | `isLoading`  | `boolean`              | A boolean indicating whether the request is currently loading.                     |
 | `error`      | `RequestError \| null` | An error object if the request encounters an error, otherwise `null`.              |
 | `statusCode` | `number \| null`       | The HTTP status code of the response, or `null` if no response has been received.  |
-| `sendData`   | `function`             | A function that can be called to manually trigger the PATCH request with new data. |
+| `trigger`   | `function`             | A function that can be called to manually trigger the PATCH request with new data. |
 
 ### usePut
 
@@ -316,7 +316,7 @@ The `usePut` hook returns an object with properties similar to other hooks:
 | `isLoading`  | `boolean`              | A boolean indicating whether the request is currently loading.                    |
 | `error`      | `RequestError \| null` | An error object if the request encounters an error, otherwise `null`.             |
 | `statusCode` | `number \| null`       | The HTTP status code of the response, or `null` if no response has been received. |
-| `sendData`   | `function`             | A function that can be called to manually trigger the PUT request with new data.  |
+| `trigger`   | `function`             | A function that can be called to manually trigger the PUT request with new data.  |
 
 ### useDelete
 
@@ -340,7 +340,7 @@ The `useDelete` hook returns an object with properties similar to other hooks:
 | `isLoading`  | `boolean`              | A boolean indicating whether the request is currently loading.                    |
 | `error`      | `RequestError \| null` | An error object if the request encounters an error, otherwise `null`.             |
 | `statusCode` | `number \| null`       | The HTTP status code of the response, or `null` if no response has been received. |
-| `sendData`   | `function`             | A function that can be called to manually trigger the DELETE request.             |
+| `trigger`   | `function`             | A function that can be called to manually trigger the DELETE request.             |
 
 ## Options
 
